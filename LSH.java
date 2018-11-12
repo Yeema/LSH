@@ -46,22 +46,12 @@ public class LSH {
     static int k = 3;
 	static int N = 12561;
     static int p = 12569;
-    // static int numofarticle = 2;
-    // static int minofarticle =100;
     static int iteration ;
     /*
         input 50 files
         output [three-shingling] [file no.]
      */
     public static class ShinglesMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
-        // String filename;
-
-        // @Override
-        // protected void setup(Context context) throws IOException, InterruptedException {
-        //     FileSplit fsFileSplit = (FileSplit) context.getInputSplit();
-        //     filename = context.getConfiguration().get(fsFileSplit.getPath().getParent().getName());
-        // }
-        //location holds file names
         private final static Text location = new Text();
         private String mapInputFileName;
         private int FileName;
@@ -78,8 +68,6 @@ public class LSH {
         }
 		@Override
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            // FileSplit fileSplit = (FileSplit)context.getInputSplit();
-            // String filename = fileSplit.getPath().getName();
 
             String line = value.toString().replaceAll("[^a-zA-Z]+", " ");
             StringTokenizer itr = new StringTokenizer(line.toLowerCase());
@@ -88,7 +76,6 @@ public class LSH {
             while (itr.hasMoreTokens()) {
                 word.set(itr.nextToken());
                 collector.add(word.toString());
-                // context.write(new Text(mapInputFileName),new Text(word));
             }
             
             if(collector.size()>=k)
@@ -456,27 +443,6 @@ public class LSH {
         return job.waitForCompletion(true);
      
     }
-    // public boolean job6(String in, String out) throws IOException, ClassNotFoundException, InterruptedException {
-        
-    //     Job job = Job.getInstance(new Configuration(), "Job #6");
-    //     job.setJarByClass(LSH.class);
-        
-    //     // input / mapper
-    //     FileInputFormat.addInputPath(job, new Path(in));
-    //     job.setInputFormatClass(TextInputFormat.class);
-    //     job.setMapOutputKeyClass(Text.class);
-    //     job.setMapOutputValueClass(IntWritable.class);
-    //     job.setMapperClass(pairsMapper.class);
-    //     // output / reducer
-    //     FileOutputFormat.setOutputPath(job, new Path(out));
-    //     job.setOutputFormatClass(TextOutputFormat.class);
-    //     job.setOutputKeyClass(Text.class);
-    //     job.setOutputValueClass(DoubleWritable.class);
-    //     job.setReducerClass(pairsReducer.class);
-    //     job.setNumReduceTasks(1);
-    //     return job.waitForCompletion(true);
-     
-    // }
 
 	public static void main(String[] args) throws Exception{
         String input = "yihuei/lshjava/data";
@@ -485,13 +451,6 @@ public class LSH {
 
         Configuration conf = new Configuration();
         FileSystem fs = FileSystem.get(conf);
-
-        // input argu
-        // String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-		// if (otherArgs.length != 2) {
-		// 	System.err.println("Usage: pagerank <in> <out>");
-		// 	System.exit(2);
-		// }
 
         boolean isCompleted = lsh.job1(input,outpath+"/shingling");
         // boolean isCompleted;
@@ -562,7 +521,6 @@ public class LSH {
                     one+=1.0;
                 }
             }
-            // System.out.println(a+","+b+"\t"+two+" "+(one+two));
             map.put(two/(one+two) , a+","+b);
         }
         for(Map.Entry<Double,String> entry : map.descendingMap().entrySet()) {
